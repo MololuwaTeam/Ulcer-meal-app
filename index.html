@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ulcer-Safe Nigerian Meal Plan</title>
+  <link rel="manifest" href="manifest.json" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: #121212;
+      color: #ddd;
+    }
+    .hero {
+      background: url('banner.jpg') center/cover no-repeat;
+      height: 240px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.7);
+      font-size: 1.8em;
+      font-weight: bold;
+    }
+    .container {
+      padding: 20px;
+      max-width: 800px;
+      margin: auto;
+    }
+    h1, h2 {
+      color: #90ee90;
+    }
+    button, .button-link {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #2e7d32;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      text-align: left;
+    }
+    .button-link {
+      text-decoration: none;
+    }
+    .section {
+      background: #1e1e1e;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+    .day-card {
+      background: #292929;
+      border-left: 4px solid #81c784;
+      margin: 15px 0;
+      padding: 15px;
+      border-radius: 6px;
+    }
+    footer {
+      text-align: center;
+      font-size: 13px;
+      margin: 30px 0;
+      color: #90ee90;
+    }
+    #commentBox {
+      width: 100%;
+      height: 100px;
+      padding: 10px;
+      background: #2a2a2a;
+      color: #ddd;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    #unlockInput {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background: #2a2a2a;
+      color: #ddd;
+      border: 1px solid #555;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero">Ulcer-Safe Nigerian Meal Plan</div>
+
+  <div class="container">
+
+    <div class="section">
+      <button id="toggleViewBtn">📄 View Full 30-Day Plan</button>
+      <button id="downloadBtn">📥 Download Meal Plan</button>
+      <button id="shareBtn">📤 Share This App</button>
+    </div>
+
+    <div class="section" id="unlockSection" style="display:none;">
+      <h2>🔒 Enter Unlock Code</h2>
+      <input type="text" id="unlockInput" placeholder="Enter your code" />
+      <button onclick="tryUnlock()">Unlock</button>
+      <p>Unlock full plan for ₦1,000. Message <a href="https://wa.me/2347026114667">WhatsApp</a> after payment.</p>
+    </div>
+
+    <div class="section" id="mealPlanContent"></div>
+
+    <div class="section" id="dayNav" style="display:none;">
+      <button onclick="prevDay()">← Previous Day</button>
+      <span id="dayCounter">Day 1</span>
+      <button onclick="nextDay()">Next Day →</button>
+    </div>
+
+    <div class="section">
+      <h2>💬 Leave a Tip / Comment</h2>
+      <textarea id="commentBox" placeholder="Write a thank you message or tip..."></textarea>
+    </div>
+
+    <div class="section">
+      <h2>📘 Ulcer Education</h2>
+      <ul>
+        <li>Eat small meals frequently.</li>
+        <li>Avoid pepper, alcohol, fried or acidic foods.</li>
+        <li>Take ulcer-friendly swallows (oat, amala, unripe plantain fufu).</li>
+        <li>Rest and manage stress levels.</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>📢 Referral Program</h2>
+      <p>Refer friends. If 3 people unlock using your name, you get a free code.</p>
+    </div>
+
+    <div class="section">
+      <h2>💚 Support & Payment Info</h2>
+      <a href="https://paystack.shop/pay/supportulcermeals" class="button-link">💳 Pay via Paystack</a>
+      <p><strong>OR Transfer:</strong><br>
+      Bank: Opay<br>
+      Acc No: 9027659345<br>
+      Name: Adenaya Mololuwa Ebenezer</p>
+      <p>After transfer, message <a href="https://wa.me/2347026114667">WhatsApp: +2347026114667</a> for your access code.</p>
+    </div>
+
+    <div class="section">
+      <h2>📧 About This App</h2>
+      <p>Built for Nigerians managing ulcers. Created by Mololuwa Adenaya</p>
+      <p>Email: <a href="mailto:adenayamololuwa@gmail.com">adenayamololuwa@gmail.com</a></p>
+      <p>Share: <a href="https://tinyurl.com/nigerianulcerfoods">tinyurl.com/nigerianulcerfoods</a></p>
+    </div>
+
+    <footer>© 2025 Mololuwa Adenaya. All rights reserved.</footer>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.9.3/html2pdf.bundle.min.js"></script>
+  <script>
+    const meals = [
+      { b: 'Pap + honey + banana', l: 'Amala + ewedu + fish', d: 'Semovita + okro soup (no pepper)' },
+      { b: 'Oats + apple slices', l: 'Unripe plantain fufu + ugu + chicken', d: 'Mashed sweet potato + vegetables' },
+      { b: 'Boiled yam + egg sauce (no pepper)', l: 'Oat swallow + efo riro (mild) + fish', d: 'Brown rice + carrot sauce' },
+      { b: 'Custard + milk + pawpaw', l: 'Semovita + okro + turkey', d: 'Bread + boiled egg' },
+      { b: 'Banana + tiger nut milk', l: 'Plantain fufu + vegetable soup + goat meat', d: 'Jollof rice (no pepper) + fish' },
+      { b: 'Bread + honey + tea', l: 'Amala + ewedu + tilapia', d: 'Sweet potato + stir-fried spinach' },
+      { b: 'Akamu + milk', l: 'Oat swallow + efo riro + chicken', d: 'Boiled yam + garden egg sauce' },
+      { b: 'Smoothie (banana + milk)', l: 'Semovita + okro + beef', d: 'Rice + carrot + green beans' },
+      { b: 'Boiled Irish potato + egg', l: 'Amala + ewedu + chicken', d: 'Sweet corn + avocado' },
+      { b: 'Oats + dates + apple', l: 'Unripe plantain fufu + ugu + fish', d: 'Bread + avocado' },
+      { b: 'Custard + banana', l: 'Semovita + okro + dry fish', d: 'Vegetable yam porridge (no palm oil)' },
+      { b: 'Tiger nut milk + biscuits', l: 'Amala + ewedu + chicken', d: 'Irish potato porridge' },
+      { b: 'Rice + fried egg (no pepper)', l: 'Oat swallow + ugu + goat meat', d: 'Moi moi + pap' },
+      { b: 'Plantain flour swallow + efo riro + catfish', l: 'Boiled yam + sauce (no oil)', d: 'Vegetable rice + chicken' },
+      { b: 'Bread + milk', l: 'Semovita + okro soup + fish', d: 'Beans (soft) + ripe plantain' },
+      { b: 'Pap + date syrup', l: 'Amala + ewedu + snail', d: 'Noodles (no pepper) + egg' },
+      { b: 'Oats + banana', l: 'Oat swallow + mild efo + turkey', d: 'Bread + okra soup' },
+      { b: 'Custard + honey', l: 'Unripe plantain fufu + ugu + beef', d: 'Sweet potato porridge' },
+      { b: 'Boiled egg + tea + bread', l: 'Amala + ewedu + dry fish', d: 'White rice + stew (no pepper)' },
+      { b: 'Fruit salad + oats', l: 'Oat swallow + vegetable soup', d: 'Beans porridge + boiled plantain' },
+      { b: 'Pap + milk + honey', l: 'Semovita + okro + chicken', d: 'Bread + soft avocado' },
+      { b: 'Oats + peanut butter + banana', l: 'Amala + ewedu + fish', d: 'Rice + vegetable sauce' },
+      { b: 'Boiled yam + egg (no pepper)', l: 'Oat swallow + ugu + goat meat', d: 'Porridge beans + ripe plantain' },
+      { b: 'Custard + pawpaw', l: 'Semovita + okra soup + catfish', d: 'Vegetable salad + boiled eggs' },
+      { b: 'Banana smoothie', l: 'Unripe plantain fufu + efo + snail', d: 'Rice + dry fish + spinach' },
+      { b: 'Tiger nut milk + oats', l: 'Amala + ewedu + beef', d: 'Sweet potato + egg sauce' },
+      { b: 'Akamu + honey + banana', l: 'Oat swallow + mild efo riro + turkey', d: 'Boiled yam + vegetable sauce' },
+      { b: 'Boiled egg + tea', l: 'Semovita + okro + fish', d: 'Moi moi + pap' },
+      { b: 'Oats + dates + milk', l: 'Unripe plantain fufu + ugu + chicken', d: 'Sweet corn + stir-fried veggies' },
+      { b: 'Fruit bowl + bread', l: 'Amala + ewedu + tilapia', d: 'Rice + egg sauce (no pepper)' }
+    ];
+
+    const masterCode = "ULCERMASTER123";
+    const userCodes = Array.from({ length: 100 }, (_, i) => "ULC" + String(i + 1).padStart(3, '0'));
+    let unlocked = localStorage.getItem('ulcerPremium') === 'yes';
+    let fullView = false;
+    let currentDay = 0;
+
+    const mealEl = document.getElementById("mealPlanContent");
+    const counter = document.getElementById("dayCounter");
+    const unlockSection = document.getElementById("unlockSection");
+
+    function renderDay(i) {
+      const m = meals[i];
+      mealEl.innerHTML = `<div class="day-card">
+        <h2>Day ${i + 1}</h2>
+        <p><strong>Breakfast:</strong> ${show(i, m.b)}</p>
+        <p><strong>Lunch:</strong> ${show(i, m.l)}</p>
+        <p><strong>Dinner:</strong> ${show(i, m.d)}</p>
+      </div>`;
+      counter.textContent = `Day ${i + 1}`;
+    }
+
+    function renderFull() {
+      mealEl.innerHTML = meals.map((m, i) => `
+        <div class="day-card">
+          <h2>Day ${i + 1}</h2>
+          <p><strong>Breakfast:</strong> ${show(i, m.b)}</p>
+          <p><strong>Lunch:</strong> ${show(i, m.l)}</p>
+          <p><strong>Dinner:</strong> ${show(i, m.d)}</p>
+        </div>
+      `).join('');
+    }
+
+    function show(i, text) {
+      return i <= 2 || unlocked ? text : "🔒 Locked";
+    }
+
+    function tryUnlock() {
+      const code = document.getElementById("unlockInput").value.trim();
+      if (code === masterCode || userCodes.includes(code)) {
+        unlocked = true;
+        localStorage.setItem('ulcerPremium', 'yes');
+        alert("✅ Premium unlocked!");
+        render();
+      } else {
+        alert("❌ Invalid code");
+      }
+    }
+
+    function render() {
+      unlockSection.style.display = unlocked ? "none" : "block";
+      document.getElementById("dayNav").style.display = fullView ? "none" : "flex";
+      document.getElementById("toggleViewBtn").textContent = fullView ? "📆 View Daily Plan" : "📄 View Full 30-Day Plan";
+      fullView ? renderFull() : renderDay(currentDay);
+    }
+
+    function prevDay() {
+      if (currentDay > 0) currentDay--;
+      renderDay(currentDay);
+    }
+
+    function nextDay() {
+      if (currentDay < meals.length - 1) currentDay++;
+      renderDay(currentDay);
+    }
+
+    document.getElementById("toggleViewBtn").onclick = () => {
+      fullView = !fullView;
+      render();
+    };
+
+    document.getElementById("downloadBtn").onclick = () => {
+      html2pdf().from(mealEl).save("UlcerMealPlan.pdf");
+    };
+
+    document.getElementById("shareBtn").onclick = () => {
+      navigator.share?.({
+        title: "Ulcer Meal Plan",
+        text: "Check out this free ulcer-safe Nigerian meal plan",
+        url: window.location.href
+      }) || alert("Sharing not supported.");
+    };
+
+    window.onload = render;
+  </script>
+</body>
+</html>
